@@ -28,6 +28,9 @@ El núcleo que orquestra la IA y las herramientas externas.
 - **Buffering Inteligente:** Redis para agrupar mensajes de WhatsApp y evitar respuestas duplicadas.
 
 ---
+<img width="1225" height="853" alt="image" src="https://github.com/user-attachments/assets/1262a139-169a-4fea-981d-5b2ae62abb4b" />
+---
+
 
 ## 🚀 Guía de Inicio Rápido
 
