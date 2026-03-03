@@ -79,4 +79,4 @@ Este proyecto está bajo la licencia MIT.
 
 ---
 
-**Construido por Dr. Luna & Argus-Legal Team con ❤️**
+**Construido por Claudio Luna & Argus-Legal Team con ❤️**
