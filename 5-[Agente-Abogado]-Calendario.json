@@ -1,0 +1,336 @@
+{
+  "name": "5-[Agente-Abogado]-Calendario",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=Descripcion General:\n\nEres un asistente de calendario. Tu función es ayudar a los usuarios a gestionar eventos de manera eficiente, interactuando con el calendario para obtener información, listar eventos, crear, actualizar y eliminar eventos. Debes interpretar correctamente las solicitudes del usuario y ejecutar la acción correspondiente con precisión.  \n\nHerramientas:\n\n**ObtenerEventos** utiliza esta herramienta para obtener una lista de eventos dentro de las fechas que proporcione el usuario. Si no da información suficiente, tienes que solicitarla.\n**CrearEvento** utiliza esta herramienta para crear un evento con la información proporcionada por el usuario.  \n**ActualizarEvento** utiliza esta herramienta para modificar o actualizar un evento con la información proporcionada por el usuario. Usa **ObtenerEventos** para obtener el ID del evento.\n**EliminarEvento:** utiliza esta herramienta para eliminar un evento especificado por el usuario. Solicita confirmación antes de eliminar. Usa **ObtenerEventos** para obtener el ID del evento. \n\nReglas:  \n\nSiempre valida que la información proporcionada por el usuario sea suficiente para ejecutar la acción.  \n\nEn caso de datos incompletos (por ejemplo, falta la fecha o el ID del evento), solicita la información faltante antes de continuar.  \n\nSi un evento no existe o hay un error, proporciona una respuesta explicativa y, si es posible, sugiere una solución.  \n\nSi se solicita una lista de eventos, incluye solo la información relevante (título, fecha, hora y ubicación).  \n  \nEjemplos:\n\n**1. Obtener un evento específico:**  \nUsuario: \"Muéstrame los detalles de la reunión sobre 'Análisis de mercado'.\"  \nRespuesta esperada:  \n\nTítulo: Reunión de equipo\nFecha: 25 de febrero de 2025\nHora: 10:00 AM - 11:00 AM\nUbicación: Sala de conferencias A\nDescripción: Revisión de progreso del proyecto\n\n\n**2. Listar eventos dentro de un rango de fechas:**  \nUsuario: \"¿Cuáles son mis eventos entre el 1 y el 5 de marzo?\"  \nRespuesta esperada:  \nEventos del 1 al 5 de marzo de 2025:\n\n[1 de marzo] Presentación de ventas (9:00 AM - 10:30 AM)\n[3 de marzo] Reunión con clientes (14:00 PM - 15:00 PM)\n[5 de marzo] Taller de capacitación (10:00 AM - 12:00 PM)\n\n\n\n**3. Crear un nuevo evento:**  \nUsuario: \"Programa un evento llamado 'Llamada con proveedor' para el 7 de marzo a las 4 de la tarde.\"  \nRespuesta esperada:  \n\n\nEvento creado con éxito:\nTítulo: Llamada con proveedor\nFecha: 7 de marzo de 2025\nHora: 16:00 PM - 17:00 PM\nEstado: Confirmado\n\n\n**4. Actualizar un evento:**  \nUsuario: \"Cambia la hora de la reunión con clientes del 3 de marzo a las 4 de la tarde.\"  \nRespuesta esperada:  \n\nEvento actualizado con éxito:\nTítulo: Reunión con clientes\nNueva Hora: 16:00 PM - 17:00 PM\nFecha: 3 de marzo de 2025\n\n**5. Eliminar un evento:**  \nUsuario: \"Elimina la presentación de ventas del 1 de marzo.\"  \nRespuesta esperada:  \n\nEl evento 'Presentación de ventas' programado para el 1 de marzo ha sido eliminado correctamente.\n\n\nRecordatorios finales:\n- Si no se especifica una duración para un evento, se asumirá que durará una hora.  \n- Fecha y hora actual: **{{ $now }}**  \n- Si el usuario solicita información o acciones sin proporcionar datos clave (como ID o fecha), pídele los detalles necesarios.  \n- Siempre verifica la existencia del evento antes de actualizarlo o eliminarlo.  \n",
+          "maxIterations": 30
+        }
+      },
+      "id": "17c72904-dd7c-426d-836e-be7a5f659c9c",
+      "name": "Agente de Calendario",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        -480,
+        80
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {
+          "frequencyPenalty": 0,
+          "presencePenalty": 0,
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -784,
+        400
+      ],
+      "id": "cc533b79-92e1-4764-b566-18e47f8f1dce",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "EgdkzfxvipBYg2yo",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "39c2f302-03be-4464-a17a-d7cc481d6d44",
+              "name": "=response",
+              "value": "={{$json.output}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7be04b67-4cd4-48fb-9f9d-cad46a43e666",
+      "name": "✅",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        16,
+        -32
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7ab380a2-a8d3-421c-ab4e-748ea8fb7904",
+              "name": "response",
+              "value": "No se puede realizar la tarea. Por favor, inténtalo de nuevo.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "120656e0-c6ed-4e00-8e93-0295e4a3ef67",
+      "name": "❌",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        32,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -880,
+        80
+      ],
+      "id": "8f2c7e36-63ca-47fd-96a5-39ad0aeab333",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "28c980da31a2c1fb35855dbd6c1089a0bc78c8c2d57de37b2adfec07ac9e7c18@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Abogado"
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -624,
+        400
+      ],
+      "id": "36e8323b-1f0e-4ea0-bfbf-48088f5ac3f7",
+      "name": "CrearEvento",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "cVOQfNRrgvCuJnkh",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "28c980da31a2c1fb35855dbd6c1089a0bc78c8c2d57de37b2adfec07ac9e7c18@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Abogado"
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -432,
+        416
+      ],
+      "id": "26987d7a-7e82-4c03-b035-a748b67d318d",
+      "name": "ObtenerEventos",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "cVOQfNRrgvCuJnkh",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "28c980da31a2c1fb35855dbd6c1089a0bc78c8c2d57de37b2adfec07ac9e7c18@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Abogado"
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -80,
+        384
+      ],
+      "id": "c0d362b1-2fea-4193-b1eb-c2bea1ec931f",
+      "name": "EliminarEvento",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "cVOQfNRrgvCuJnkh",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "28c980da31a2c1fb35855dbd6c1089a0bc78c8c2d57de37b2adfec07ac9e7c18@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Abogado"
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -256,
+        400
+      ],
+      "id": "12b88576-5910-46b2-936e-27ed8f0c92b7",
+      "name": "ActualizarEvento",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "cVOQfNRrgvCuJnkh",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "app-legal-caledar",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -880,
+        -144
+      ],
+      "id": "69e5828f-985a-4ee3-9b58-a1413857403c",
+      "name": "Webhook",
+      "webhookId": "6cbfbbe3-96ac-4cc6-9a43-2469bd31b834"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente de Calendario",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente de Calendario": {
+      "main": [
+        [
+          {
+            "node": "✅",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "❌",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Agente de Calendario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CrearEvento": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de Calendario",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ObtenerEventos": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de Calendario",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "EliminarEvento": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de Calendario",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ActualizarEvento": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de Calendario",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Agente de Calendario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3077c982-241e-44ac-8eec-c73117b57202",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "56d5dfb874ed14e16e25c8104bf7be18bef2408749468d2935c8cf23738884c4"
+  },
+  "id": "XzSO33RKmz5uq1h1",
+  "tags": []
+}
